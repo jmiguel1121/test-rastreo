@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS STATISTIC (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    country VARCHAR(255),
+    country_code VARCHAR(255) UNIQUE NOT NULL,
+    distance INT NOT NULL,
+    measure VARCHAR(255),
+    requests INT
+);

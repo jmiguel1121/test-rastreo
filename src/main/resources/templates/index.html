@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Statistics Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <h1>Track Statistics</h1>
+    <div class="container">
+        <form id="trackForm">
+            <div class="input-group mb-3">
+                <span class="input-group-text">IP</span>
+                <input id="ip" type="text" class="form-control" placeholder="Direccion ip" aria-label="direccionip"
+                    aria-describedby="basic-addon1">
+            </div>
+            <button class="btn btn-primary" id="trackingIP">Info ip</button>
+            <button class="btn btn-secondary" id="statisticsMax">Statistics Max</button>
+            <button class="btn btn-info" id="statisticsMin">Statistics Min</button>
+            <button class="btn btn-warning" id="statisticsAverage">Statistics Average</button>
+            <button class="btn btn-dark" id="statisticsAll">Statistics All</button>
+        </form>
+        <h2>infomacion de la ip :</h2>
+        <div id="result"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            const urlbase = 'http://localhost:8080/api/statistics/tracking';
+
+            function callGet(url) {
+                $("#result").text('');
+                return $.ajax({
+                    url: url,
+                    method: "GET",
+                    error: function (error) {
+                        $("#result").text("Error: " + error);
+                    },
+                });
+            }
+
+            function print(statistic) {
+                $("#result").append('<h5>Country Code</h5><p>' + statistic.countryCode + '</p>')
+                    .append('<h5>Country</h5><p>' + statistic.country + '</p>')
+                    .append('<h5>Distance</h5><p>' + statistic.distance + '</p>')
+                    .append('<h5>Measure</h5><p>' + statistic.measure + '</p>')
+                    .append('<h5>Requests</h5><p>' + statistic.requests + '</p>')
+                    .append('<hr>');
+            }
+
+
+            $("#trackingIP").on("click", function (event) {
+                event.preventDefault();
+                let ip = $("#ip").val();
+                if (ip) {
+                    let url = 'http://localhost:8080/track/request/info/' + ip;
+                    callGet(url).done(function (jsonResp) {
+                        console.log(jsonResp);
+
+                        $("#result")
+                            .append(`<p>IP: ${jsonResp.ip} </p>`)
+                            .append(`<p>Current Date: ${jsonResp.currentDate} </p>`)
+                            .append(`<p>Country: ${jsonResp.country} </p>`)
+                            .append(`<p>Language: ${jsonResp.language} </p>`)
+                            .append(`<p>Currency: ${jsonResp.currency} </p>`)
+                            .append(`<p>Time: ${jsonResp.time.join(", ")} </p>`)
+                            .append(`<p>Distance: ${jsonResp.distance} </p>`)
+                            .append(`<p>ISO Code: ${jsonResp.isocode} </p>`);
+                    })
+
+                } else {
+                    $("#result").append(`<p>IP no ingreada </p>`)
+                }
+            });
+
+            $("#statisticsMax").on("click", function (event) {
+                event.preventDefault();
+                let url = urlbase + '/max';
+                callGet(url).done(function (statistic) {
+                    print(statistic)
+                })
+            });
+
+            $("#statisticsMin").on("click", function (event) {
+                event.preventDefault();
+                let url = urlbase + '/min';
+                callGet(url).done(function (statistic) {
+                    print(statistic)
+                })
+            });
+
+            $("#statisticsAverage").on("click", function (event) {
+                event.preventDefault();
+                let url = urlbase + '/average';
+                callGet(url).done(function (statistic) {
+                    $("#result").append(`Promedio: ${statistic}`)
+                })
+            });
+
+            $("#statisticsAll").on("click", function (event) {
+                event.preventDefault();
+                let url = urlbase;
+                callGet(url).done(function (jsonResp) {
+                    $("#result").append('<table class="table"><thead><tr><th>Country Code</th><th>Country</th><th>Distance</th><th>Measure</th>' +
+                        '<th>Requests</th></tr></thead><tbody>' +
+                        jsonResp.map(function (statistic) {
+                            return `<tr>
+                            <td>${statistic.countryCode}</td>
+                            <td>${statistic.country}</td>
+                            <td>${statistic.distance}</td>
+                            <td>${statistic.measure}</td>
+                            <td>${statistic.requests}</td>
+                            </tr>`;
+                        }).join('')
+                        + '</tbody></table>');
+                }).done(function (rows) {
+
+                })
+            });
+        });
+    </script>
+</body>
+
+</html>
