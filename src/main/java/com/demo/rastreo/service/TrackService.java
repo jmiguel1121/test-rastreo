@@ -14,10 +14,6 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class TrackService {
 
-    @Value("${fixer.url.key}")
-    private String fixerKey;
-    @Value("${countrylayer.url.key}")
-    private String countryLayerKey;
     @Value("${ipapi.url.key}")
     private String ipapiKey;
     @Value("${exchange-rate.url.key}")
@@ -26,18 +22,13 @@ public class TrackService {
     private String currencyBase;
     @Value("${tracking.country.code}")
     private String countryBase;
-    @Autowired
-    private CountryLayerGateway countryLayer;
+
     @Autowired
     private RestCountriesGateway restCountries;
-    @Autowired
-    private FixerGateway fixer;
     @Autowired
     private IpapiGateway ipapi;
     @Autowired
     private ExchangeRateGateway exchangeRate;
-    @Autowired
-    private OsrmRouterGateway osrmRouter;
     @Autowired
     private StatisticService statistic;
 
