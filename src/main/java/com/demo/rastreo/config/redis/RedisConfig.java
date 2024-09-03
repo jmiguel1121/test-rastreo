@@ -35,7 +35,6 @@ public class RedisConfig {
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         ObjectMapper mapper = new ObjectMapper();
-        //mapper.constructType(Object.class);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Jackson2JsonRedisSerializer<Object> jsonSerializer = new CacheRedisSerializer<>(mapper, Object.class);
 
