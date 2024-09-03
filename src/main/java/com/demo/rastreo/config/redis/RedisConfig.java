@@ -49,7 +49,7 @@ public class RedisConfig {
                 .build();
     }
 
-    //@Bean
+    @Bean
     public RedisStandaloneConfiguration redisStandaloneConfiguration() {
         RedisStandaloneConfiguration redisStandaloneConfiguration
                 = new RedisStandaloneConfiguration("redis-server", 6379);
